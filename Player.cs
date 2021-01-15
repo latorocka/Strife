@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 
+
 public class Player : MonoBehaviour
 {
     [SerializeField] float runSpeed = 5f;
@@ -17,7 +18,6 @@ public class Player : MonoBehaviour
     {
         myRigidBody = GetComponent<Rigidbody2D>();
         myAnimator = GetComponent<Animator>();
-        
     }
 
     void Update()
@@ -54,6 +54,7 @@ public class Player : MonoBehaviour
         {
             return;
         }
+        
 
         if (CrossPlatformInputManager.GetButtonDown("Jump"))
         {
@@ -61,6 +62,7 @@ public class Player : MonoBehaviour
             myRigidBody.velocity += jumpVelocityToAdd;
             myAnimator.SetBool("Jumping", true);
         }
+       
     }
 
     private void Dash()
