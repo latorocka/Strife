@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
+using Debug = UnityEngine.Debug;
 
 
 public class Player : MonoBehaviour
@@ -9,10 +10,14 @@ public class Player : MonoBehaviour
     [SerializeField] float runSpeed = 5f;
     [SerializeField] float jumpSpeed = 5f;
     [SerializeField] public float dashSpeed;
+
+    public bool _resetJump = false;
+    
     
 
     Rigidbody2D myRigidBody;
     Animator myAnimator;
+
    
     void Start()
     {
@@ -34,6 +39,7 @@ public class Player : MonoBehaviour
         float controlThrow = CrossPlatformInputManager.GetAxis("Horizontal");
         Vector2 playerVelocity = new Vector2(controlThrow * runSpeed, myRigidBody.velocity.y);
         myRigidBody.velocity = playerVelocity;
+        
 
         bool playerHasHorizontalSpeed = Mathf.Abs(myRigidBody.velocity.x) > Mathf.Epsilon;
         myAnimator.SetBool("Running", playerHasHorizontalSpeed);
@@ -59,10 +65,11 @@ public class Player : MonoBehaviour
         if (CrossPlatformInputManager.GetButtonDown("Jump"))
         {
             Vector2 jumpVelocityToAdd = new Vector2(0f, jumpSpeed);
+            StartCoroutine(ResetJumpRoutine());
             myRigidBody.velocity += jumpVelocityToAdd;
             myAnimator.SetBool("Jumping", true);
         }
-       
+        
     }
 
     private void Dash()
@@ -79,4 +86,13 @@ public class Player : MonoBehaviour
         
         
     }
+
+    IEnumerator ResetJumpRoutine()
+    {
+        _resetJump = true;
+        yield return new WaitForSeconds(0.1f);
+        _resetJump = false;
+    }
+
+    
 }
