@@ -12,8 +12,9 @@ public class Player : MonoBehaviour
     [SerializeField] public float dashSpeed;
 
     public bool _resetJump = false;
-    
-    
+    bool isAlive = true;
+
+
 
     Rigidbody2D myRigidBody;
     Animator myAnimator;
@@ -27,11 +28,13 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        
+        if (!isAlive) { return; }
+
         Run();
         FlipSprite();
         Jump();
         Dash();
+        Die();
     }
 
     private void Run()
@@ -56,12 +59,13 @@ public class Player : MonoBehaviour
 
     private void Jump()
     {
+        
         if (!myRigidBody.IsTouchingLayers(LayerMask.GetMask("Ground")))
         {
             return;
         }
         
-
+        
         if (CrossPlatformInputManager.GetButtonDown("Jump"))
         {
             Vector2 jumpVelocityToAdd = new Vector2(0f, jumpSpeed);
@@ -79,11 +83,8 @@ public class Player : MonoBehaviour
             float controlThrow = CrossPlatformInputManager.GetAxis("Horizontal");
             Vector2 playerVelocity = new Vector2(controlThrow * dashSpeed, myRigidBody.velocity.y);
             myRigidBody.velocity = playerVelocity;
-            myAnimator.SetTrigger("IsDashing");
-
+            myAnimator.SetBool("IsDashing", true);
         }
-        
-        
         
     }
 
@@ -94,5 +95,13 @@ public class Player : MonoBehaviour
         _resetJump = false;
     }
 
-    
+    private void Die()
+    {
+        if (myRigidBody.IsTouchingLayers(LayerMask.GetMask("Hazards")))
+        {
+            isAlive = false;
+            myAnimator.SetTrigger("Dying");
+        }
+    }
+
 }
